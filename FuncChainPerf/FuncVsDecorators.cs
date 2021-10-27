@@ -1,4 +1,5 @@
 ﻿using System;
+
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 
@@ -8,11 +9,12 @@ namespace FuncChainPerf
     /*
 |           Method |        Mean |     Error |    StdDev | Ratio |  Gen 0 | Allocated |
 |----------------- |------------:|----------:|----------:|------:|-------:|----------:|
-| TransformClasses |   965.90 ns | 17.717 ns | 16.572 ns |  1.00 |      - |         - |
-|    TransformFunc |   686.95 ns |  2.579 ns |  2.412 ns |  0.71 |      - |         - |
+| TransformClasses |   958.10 ns |  5.394 ns |  4.782 ns |  1.00 |      - |         - |
+|    TransformFunc |   736.81 ns |  3.840 ns |  3.592 ns |  0.77 |      - |         - |
+|  TransformNative |   302.39 ns |  1.040 ns |  0.922 ns |  0.32 |      - |         - |
 |                  |             |           |           |       |        |           |
-|    CreateClasses | 2,334.20 ns | 15.797 ns | 14.003 ns |  1.00 | 1.9112 |  12,000 B |
-|       CreateFunc |    65.82 ns |  0.624 ns |  0.521 ns |  0.03 |      - |         - |
+|    CreateClasses | 2,355.82 ns | 15.455 ns | 13.701 ns |  1.00 | 1.9112 |  12,000 B |
+|       CreateFunc |    84.95 ns |  0.425 ns |  0.377 ns |  0.04 |      - |         - |
      */
 
     [MemoryDiagnoser]
@@ -44,6 +46,15 @@ namespace FuncChainPerf
             double d = 0;
             for (int i = 0; i < ITERATIONS; i++)
                 d = _func(new(50)).Value;
+            return d;
+        }
+
+        [Benchmark, BenchmarkCategory("Transform")]
+        public double TransformNative()
+        {
+            double d = 0;
+            for (int i = 0; i < ITERATIONS; i++)
+                d = new Signal(new Signal(new Signal(new Signal(50).Value + 16).Value * 60).Value * 5).Value;
             return d;
         }
 
