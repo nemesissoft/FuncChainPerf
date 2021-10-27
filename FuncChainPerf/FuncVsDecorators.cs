@@ -54,7 +54,7 @@ namespace FuncChainPerf
         {
             double d = 0;
             for (int i = 0; i < ITERATIONS; i++)
-                d = new Signal(new Signal(new Signal(new Signal(50).Value + 16).Value * 60).Value * 5).Value;
+                d = new Signal(new Signal(new Signal(new Signal(50).Value + 16).Value * 60).Value + 5).Value;
             return d;
         }
 
